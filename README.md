@@ -7,6 +7,7 @@ Si alguna vez has necesitado presentar estímulos y recopilar datos para test ps
 [Full Stack Javascript para tests y experimentos conductuales ( I )](http://herreriasjose.blogspot.com.es/2016/08/full-stack-javascript-para-tests-y.html)
 
 [Full Stack Javascript para tests y experimentos conductuales ( II )](http://herreriasjose.blogspot.com.es/2016/09/full-stack-javascript-para-tests-y.html)
+
 --------------------------------------------
 
 José Herrerías
