@@ -1,0 +1,85 @@
+<!doctype html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<title>Mi primer test con jsPysch</title>
+	
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	 <script src="jspsych-5.0.3/jspsych.js"></script>
+     <script src="jspsych-5.0.3/plugins/jspsych-text.js"></script>
+     <script src="jspsych-5.0.3/plugins/jspsych-single-stim.js"></script>
+     
+     <link href="jspsych-5.0.3/css/jspsych.css" rel="stylesheet" type="text/css"></link>
+     
+</head>
+<body>
+	<script>
+		var saludo = {
+		type: "text",
+		text: "Bienvenido a nuestro primer test."
+		}
+		
+		var instrucciones = {
+		type: "text",
+		text: "<p>En él un círculo aparecerá en el centro " +
+          "de la pantalla.</p><p>Si el círculo es de color <strong>azul</strong>, " +
+          "pulsa la tecla F tan rápido como puedas.</p>" +
+          "<p>Si el círculo es <strong>naranja</strong>, no pulses " +
+          "ninguna tecla.</p>" +
+          "<div class='left center-content'><img src='img/azul.png'></img>" +
+          "<p class='small'><strong>Pulsa la tecla F</strong></p></div>" +
+          "<div class='right center-content'><img src='img/naranja.png'></img>" +
+          "<p class='small'><strong>No pulses ninguna tecla</strong></p></div>" +
+          "<p>Pulsa una tecla para continuar.</p>"}
+          
+     var estimulos = [
+  {stimulus: 'img/azul.png',
+	data: {  respuesta_correcta: 'pulsar'}
+	},
+  {stimulus: 'img/naranja.png',
+	data: {  respuesta_correcta: 'no_pulsar'}
+	}
+];  
+          
+        var diez_pruebas = {
+			type: 'single-stim',
+			choices: ['F'],
+			timing_response: 1500,
+			timing_post_trial: function() { return Math.floor( Math.random() * 1500 ) + 750;},
+			timeline: jsPsych.randomization.repeat(estimulos,5),
+			on_finish: function(data) {
+				var correcto = false;
+				if(data.respuesta_correcta == 'pulsar' && data.rt > -1) {
+					correcto = true;
+				} else if(data.respuesta_correcta == 'no_pulsar' && data.rt == -1) {
+					correcto = true;
+				}
+			    jsPsych.data.addDataToLastTrial({correcto: correcto});	
+			}		
+		}
+			
+		var lista_tareas = [ ]; 
+		lista_tareas.push(saludo);
+		lista_tareas.push(instrucciones);
+		lista_tareas.push(diez_pruebas);
+		
+		jsPsych.init({
+			timeline: lista_tareas,
+			on_finish:function() {
+				$.ajax({
+				  type: "POST",
+				  url: "/resultado-del-test",
+				  data: JSON.stringify(jsPsych.data.getData()),
+				  contentType: "application/json"
+				})
+				.done(function() {
+				  alert("¡Gracias por participar!");
+				})
+				.fail(function() {
+				  alert("Se ha producido un fallo.")
+				})
+                 }
+		})
+		
+	</script>
+</body>
+</html>
